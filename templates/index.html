@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phishing Email Detection System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card">
+      <h1>Phishing Email Detection System</h1>
+      <p>BERT and LSTM trained deep learning models for dual phishing analysis.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Paste Email Text for Analysis</h2>
+      <form method="post" class="analysis-form">
+        <textarea name="email_text" id="email_text" rows="10" placeholder="Paste suspicious or legitimate email content here...">{{ email_text }}</textarea>
+        <div class="actions">
+          <button type="submit">Analyze Email</button>
+        </div>
+      </form>
+
+      <div class="example-strip">
+        {% for example in examples %}
+        <button type="button" class="example-button" data-example="{{ example|e }}">Example {{ loop.index }}</button>
+        {% endfor %}
+      </div>
+
+      {% if error %}
+      <div class="error-banner">{{ error }}</div>
+      {% endif %}
+    </section>
+
+    {% if results %}
+    <section class="results-wrap">
+      <h2>Analysis Results</h2>
+      <div class="result-grid">
+        <article class="result-card">
+          <span class="model-tag">BERT Transformer Prediction</span>
+          <h3 class="verdict {{ results.bert.verdict_class }}">{{ results.bert.prediction }}</h3>
+          <div class="meter">
+            <span style="width: {{ results.bert.phishing_probability }}%"></span>
+          </div>
+          <p>Phishing Probability: <strong>{{ results.bert.phishing_probability }}%</strong></p>
+          <p>Confidence: <strong>{{ results.bert.confidence }}%</strong></p>
+          <p>Risk Level: <strong>{{ results.bert.risk_level }}</strong></p>
+        </article>
+
+        <article class="result-card">
+          <span class="model-tag">LSTM RNN Prediction</span>
+          <h3 class="verdict {{ results.lstm.verdict_class }}">{{ results.lstm.prediction }}</h3>
+          <div class="meter">
+            <span style="width: {{ results.lstm.phishing_probability }}%"></span>
+          </div>
+          <p>Phishing Probability: <strong>{{ results.lstm.phishing_probability }}%</strong></p>
+          <p>Confidence: <strong>{{ results.lstm.confidence }}%</strong></p>
+          <p>Risk Level: <strong>{{ results.lstm.risk_level }}</strong></p>
+        </article>
+      </div>
+
+      <section class="summary-card">
+        <h2>Analysis Summary</h2>
+        <div class="summary-grid">
+          <div>
+            <span class="summary-label">Models Agreement</span>
+            <strong>{{ "Agree" if results.summary.models_agree else "Disagree" }}</strong>
+          </div>
+          <div>
+            <span class="summary-label">Avg Confidence</span>
+            <strong>{{ results.summary.average_confidence }}%</strong>
+          </div>
+          <div>
+            <span class="summary-label">Final Verdict</span>
+            <strong class="{{ results.summary.final_verdict|lower }}">{{ results.summary.final_verdict }}</strong>
+          </div>
+          <div>
+            <span class="summary-label">Analysis Time</span>
+            <strong>{{ results.summary.analysis_time_seconds }}s</strong>
+          </div>
+        </div>
+      </section>
+    </section>
+    {% endif %}
+  </main>
+
+  <script>
+    const textarea = document.getElementById("email_text");
+    document.querySelectorAll(".example-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        textarea.value = button.dataset.example;
+        textarea.focus();
+      });
+    });
+  </script>
+</body>
+</html>
