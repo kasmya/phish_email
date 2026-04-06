@@ -112,6 +112,9 @@ Open:
 http://127.0.0.1:5000
 ```
 
+## UI Design 
+![image](https://github.com/user-attachments/assets/f4598d73-48df-49da-869e-ff9224943e8a)
+
 ## Expected Outputs
 
 After training, the project generates:
